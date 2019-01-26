@@ -289,7 +289,7 @@
 				}
 			};
 
-			$("#filepicker").onchange = function () {
+			document.getElementById("filepicker").onchange = function () {
 				startUpload.call(this);
 			};
 
@@ -299,7 +299,7 @@
 					var imagesPasted = false;
 					// if an image is pasted, convert it to a file and add it to the (fake) this.files list
 					// then pass `this` to the startUpload function.
-					this.files = []; 
+					this.files = [];
 					for (var i = 0; i < items.length; i++) {
 						if (items[i].type.indexOf("image") >= 0) {
 							imagesPasted = true;
