@@ -181,8 +181,6 @@
 				console.error = console.debug = console.info = console.log;
 			}
 			startUpload = function () {
-
-
 				var xhr = new XMLHttpRequest();
 				xhr.upload.onprogress = function (e) {
 					console.log(e);
@@ -193,22 +191,19 @@
 					}
 				};
 				xhr.onload = function (e) {
-
-					$("#curtain").attr("style", "width: 0%;");
-
-
 					console.log(e);
+					$("#curtain").attr("style", "width: 0%;");
 					$("#previewimg").addClass("bwfilter");
 					setTimeout(function () {
 						$("#receiptcontainer").removeClass("wiggler");
 						$("#receipt").addClass("printed");
-						setTimeout(function () { location.reload() }, 2000);
+						setTimeout(function () {
+							location.reload();
+						}, 2000);
 					}, 1000);
 				};
-				xhr.open('POST', 'https://api.printi.me/submitimages'+document.location.pathname, true);
 
-				var data = new FormData();
-				var base64images = [];
+				xhr.open('POST', 'https://api.printi.me/submitimages'+document.location.pathname, true);
 
 				var added = 0;
 				var toAdd = this.files.length;
@@ -227,12 +222,10 @@
 				var filereadersupport = 'FileReader' in window;
 
 				if (!ie && allimages && filereadersupport) {
-
+					var base64images = []; // will contain base64 encoded, compressed images
 					for (var i = 0; i < this.files.length; i++) {
 						var file = this.files[i];
 						console.log(file);
-
-
 
 						var reader = new FileReader();
 						reader.onload = function (e) {
@@ -240,7 +233,7 @@
 							$("#preview").attr("style", "display: block;");
 							$("#formcontainer").attr("style", "display: none;");
 
-							var immie = document.createElement("img");
+							var immie = document.createElement("img"); // (will not be displayed)
 
 							immie.onload = function () {
 								console.log("immie loaded:");
@@ -251,13 +244,14 @@
 
 								var PAGEWIDTH = document.location.pathname == "/" ? 576 : 384; // 576 for printi classic, 384 for printi mini
 
+								// downscale by a power of two (which should be fast? but probably not 😟)
 								while (Math.min(width, height) >= PAGEWIDTH * 2) {
 									width /= 2;
 									height /= 2;
 									console.log("scaling down 2x");
 								}
 
-								var canvas = document.createElement("canvas");
+								var canvas = document.createElement("canvas"); // (will not be displayed)
 								canvas.width = width;
 								canvas.height = height;
 								var ctx = canvas.getContext("2d");
@@ -267,29 +261,27 @@
 								console.log(canvas.width);
 								console.log(canvas.height);
 
+								// render image to a jpeg (data URI) at 70% compression quality
 								var datayumyum = canvas.toDataURL("image/jpeg", .7);
 
-								//console.log(datayumyum);
+								// strip header from data URI
 								var base64data = datayumyum.split(',')[1];
 								base64images.push(base64data);
-								console.log(base64images.length);
 								added += 1;
 								if (added == toAdd) {
-									xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-									//console.log(JSON.stringify({images: base64images}))
-									xhr.send(JSON.stringify({ images: base64images }));
 									console.log("sending...");
+									xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+									xhr.send(JSON.stringify({ images: base64images }));
 								}
 							};
+							// setting the image source starts the loading process
 							immie.src = e.target.result;
-
 						}
-
 						reader.readAsDataURL(file);
-
 					}
 				} else {
 					console.log("not downsizing; sending raw files...");
+					var data = new FormData();
 					for (var i = 0; i < this.files.length; i++) {
 						data.append('file' + i, this.files[i]);
 						added += 1; if (added == toAdd) { xhr.send(data); }
@@ -297,7 +289,7 @@
 				}
 			};
 
-			document.getElementById("filepicker").onchange = function () {
+			$("#filepicker").onchange = function () {
 				startUpload.call(this);
 			};
 
@@ -305,7 +297,9 @@
 				if (e.clipboardData) {
 					var items = e.clipboardData.items;
 					var imagesPasted = false;
-					this.files = [];
+					// if an image is pasted, convert it to a file and add it to the (fake) this.files list
+					// then pass `this` to the startUpload function.
+					this.files = []; 
 					for (var i = 0; i < items.length; i++) {
 						if (items[i].type.indexOf("image") >= 0) {
 							imagesPasted = true;
@@ -319,15 +313,11 @@
 								var xhr = new XMLHttpRequest();
 								xhr.open('POST', 'https://url.printi.me/api/url/printi', true);
 								xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-								var data = JSON.stringify({ url: s });
-								xhr.send(data);
+								xhr.send(JSON.stringify({ url: s }));
 
-
-								//$("#previewimg").attr("src", source);
 								$("#preview").attr("style", "display: block;");
 								$("#formcontainer").attr("style", "dvisplay: none;");
 							});
-
 						}
 					}
 					if (imagesPasted) {
