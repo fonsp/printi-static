@@ -3,12 +3,12 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<script>console.log("printi, by Fons van der Plas (http://github.com/fons-) 🌈");</script>
-    <meta charset="utf-8" />
+		<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, user-scalable=no"/>
 	<meta name="theme-color" content="#FFEFEF"/>
 	<meta name="description" content="Send your pictures to the world's fastest photo printer!"/>
 	<link href="https://fonts.googleapis.com/css?family=Courgette|Itim" rel="stylesheet">
-    <title>printi</title>
+		<title>printi</title>
 	<style>
 		body {
 			background-color: #ffe3e3;
@@ -116,11 +116,11 @@
 		}
 
 		@keyframes wiggle {
-		  0% { transform: rotate(0deg); }
-		  25% { transform: rotate(-1deg); }
-		  50% { transform: rotate(0deg); }
-		  75% { transform: rotate(1deg); }
-		  100% { transform: rotate(0deg); }
+			0% { transform: rotate(0deg); }
+			25% { transform: rotate(-1deg); }
+			50% { transform: rotate(0deg); }
+			75% { transform: rotate(1deg); }
+			100% { transform: rotate(0deg); }
 		}
 	</style>
 </head>
@@ -162,11 +162,11 @@
 
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 	<script>
-    if(document.location.pathname != "/"){
-      $("#printernametitle").text(decodeURI(document.location.pathname))
-    }
+		if(document.location.pathname != "/"){
+			$("#printernametitle").text(decodeURI(document.location.pathname))
+		}
 		$(document).ready(function () {
-			if(0)
+			if(window.location.search.indexOf("log") != -1)
 			{
 				if (typeof console != "undefined")
 					if (typeof console.log != 'undefined')
