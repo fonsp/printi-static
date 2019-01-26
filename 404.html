@@ -162,7 +162,9 @@
 
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 	<script>
-    $("#printernametitle").text(document.location.pathname)
+    if(document.location.pathname != "/"){
+      $("#printernametitle").text(document.location.pathname)
+    }
 		$(document).ready(function () {
 			if(0)
 			{
@@ -203,7 +205,7 @@
 						setTimeout(function () { location.reload() }, 2000);
 					}, 1000);
 				};
-				xhr.open('POST', '/api/submitimages'+document.location.pathname, true);
+				xhr.open('POST', 'https://api.printi.me/submitimages'+document.location.pathname, true);
 
 				var data = new FormData();
 				var base64images = [];
