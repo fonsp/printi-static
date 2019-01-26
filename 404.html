@@ -163,7 +163,7 @@
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 	<script>
     if(document.location.pathname != "/"){
-      $("#printernametitle").text(document.location.pathname)
+      $("#printernametitle").text(decodeURI(document.location.pathname))
     }
 		$(document).ready(function () {
 			if(0)
