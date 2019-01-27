@@ -43,20 +43,27 @@ class Printer extends Component {
               </div>
               <div
                 style={{
-                  margin: '0 auto',
-                  width: 250,
-                  alignContent: 'center',
-                  textAlign: 'center',
+                  position: 'absolute',
+                  left: 180,
+                  bottom: -76,
                 }}
+                id="printername"
               >
                 <h1>
-                  {printer}
+                  {`/${printer}`}
                 </h1>
               </div>
             </div>
           </div>
         </div>
-        <div>
+        <div
+          style={{
+            margin: '0 auto',
+            width: 250,
+            alignContent: 'center',
+            textAlign: 'center',
+            }}
+          >
           <div id="receiptcontainer">
             <div id="receipt">
               <div id="preview">
@@ -81,7 +88,11 @@ class Printer extends Component {
             </a>
           </div>
           <span id="logje"></span>
-          <iframe name="responseframe" title="response">
+          <iframe
+            name="responseframe"
+            title="response"
+            style={{ display: 'none' }}
+          >
           </iframe>
         </div>
       </>

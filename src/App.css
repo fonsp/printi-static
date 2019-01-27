@@ -71,11 +71,14 @@ h1 {
 }
 
 #explain {
-
   text-decoration: underline;
   font-family: 'Courgette';
   margin-top: 400px;
   padding-bottom: 50px;
+}
+
+#filepicker {
+  cursor: pointer;
 }
 
 #explain a {
@@ -103,8 +106,14 @@ h1 {
   0% {
     opacity: .6;
   }
-  50% {opacity: .6; }
-  100% {opacity: 0; }
+
+  50% {
+    opacity: .6;
+  }
+
+  100% {
+    opacity: 0;
+  }
 }
 
 @keyframes wiggle {
