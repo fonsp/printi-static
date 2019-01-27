@@ -52,7 +52,7 @@ class Printer extends Component {
                 <h1>
                   {printer}
                 </h1>
-              </>
+              </div>
             </div>
           </div>
         </div>
@@ -84,7 +84,7 @@ class Printer extends Component {
           <iframe name="responseframe" title="response">
           </iframe>
         </div>
-      </div>
+      </>
     )
   }
 }
