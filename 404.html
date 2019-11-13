@@ -453,6 +453,9 @@
 					window.stream = stream;
 					video.srcObject = stream;
 					window.cameraConnected = true;
+					video.controls = false;
+					video.play();
+					video.controls = false;
 
 					document.getElementById("printicambuttoncontainer").classList.remove("showprinticambutton");
 					document.getElementById("cameracontainer").classList.add("showcamera");
