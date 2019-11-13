@@ -18,25 +18,49 @@
 			letter-spacing: 3px;
 			background-color: #ffefef;
 			font-family: 'Courgette', sans-serif;
+			width: 100%;
+			overflow: hidden;
 		}
+		#logocontainer {
+			margin: 0 auto;
+			width: 250px;
+			height: 80px;
+			padding-top: 30px;
+			padding-bottom: 20px;
+			align-content: center;
+			text-align: center;
+		}
+		#cameracontainer{
+			margin: 0 auto;
+			width: 250px;
+			height: 0px;
+			align-content: center;
+			text-align: center;
+			font-size: 40px;
+			cursor: pointer;
+
+			transition: height 500ms;
+			-webkit-transition: height 500ms;
+
+		}
+		.showcamera {
+			height: 80px !important;
+		}
+
 		#printername {
 			text-align: left;
 			width: 1000px;
-			animation: fadeout 3.0s forwards;
-			-webkit-animation: fadeout 3.0s forwards;
+			opacity: .6;
 		}
 		h1 {
 			font-weight: normal;
 		}
-		#receiptcontainer {
-			padding-top: 20px;
+		.receiptcontainer {
 			overflow: hidden;
 		}
 
-		#receipt {
-			padding: 12px;
-			border: 5px solid white;
-			background-color: white;
+		.receiptpadder {
+			padding-top: 20px;
 			/*
 				--Timing--
 				Printer speed: 4.5 inch per second = 114.3 mm/s
@@ -49,6 +73,12 @@
 			-webkit-transition: margin 2800ms;
 			transition-timing-function: linear;
 			-webkit-transition-timing-function: linear;
+		}
+
+		.receiptbackground {
+			padding: 12px;
+			border: 5px solid white;
+			background-color: white;
 		}
 
 		#preview{
@@ -122,33 +152,51 @@
 			75% { transform: rotate(1deg); }
 			100% { transform: rotate(0deg); }
 		}
+
+		@keyframes reveal {
+			0% { height: 0px; }
+			100% { height: 80px; }
+		}
 	</style>
 </head>
 <body>
-	<div style="width: 100%; overflow: hidden;" id="titlecontainer">
-		<div style="margin: 0 auto; width: 250px; height: 80px; padding-top: 30px; padding-bottom: 20px; align-content: center; text-align: center;">
+	<div id="titlecontainer">
+		<div id="logocontainer">
 			<div style="position: relative; ">
 
-				<div style="position: absolute; width: 100%;"><h1><img src="/Content/printi_logo_transparent.svg" width="100" height="34" alt="printi" title="printi" /></h1></div>
+				<div style="position: absolute; width: 100%;"><h1><img src="Content/printi_logo_transparent.svg" width="100" height="34" alt="printi" title="printi" /></h1></div>
 				<div style="position: absolute; left: 180px; bottom: -76px;" id="printername"><h1 id="printernametitle"></h1></div>
 			</div>
 		</div>
+		<div id="cameracontainer">
+			📷
+		</div>
 	</div>
-	<div style="margin: 0 auto; width: 250px; align-content: center; text-align: center;">
+	<div style="margin: 0 auto; width: 250px; align-content: center; text-align: center;" id="receiptstack">
 
-
-		<div id="receiptcontainer">
-			<div id="receipt">
-				<div id="preview">
-					<img id="previewimg" src="#" width="250" />
-					<div id="curtain"></div>
+		<span style="display: none" id="receiptprototype">
+			<div class="receiptcontainer">
+				<div class="receiptpadder" id="receipt1">
+					<div class="receiptbackground">
+						<div id="preview">
+							<img id="previewimg" src="#" width="250" />
+							<div id="curtain"></div>
+						</div>
+					</div>
 				</div>
-				<div id="formcontainer">
-					<form id="leform" action="" method="post" enctype="multipart/form-data" target="responseframe">
-						<input id="filepicker" type="file" name="theshiz" accept="image/*">
-						<!--<br /><br />
-			<input type="submit">-->
-					</form>
+			</div>
+		</span>
+
+		<div class="receiptcontainer">
+			<div class="receiptpadder" id="receiptupload">
+				<div class="receiptbackground">
+					<div id="formcontainer">
+						<form id="leform" action="" method="post" enctype="multipart/form-data" target="responseframe">
+							<input id="filepicker" type="file" name="theshiz" accept="image/*">
+							<!--<br /><br />
+				<input type="submit">-->
+						</form>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -180,27 +228,40 @@
 				};
 				console.error = console.debug = console.info = console.log;
 			}
+
 			startUpload = function () {
+				var receiptElements = [];
+
 				var xhr = new XMLHttpRequest();
 				xhr.upload.onprogress = function (e) {
 					console.log(e);
 					var reverseprogress = ((e.total - e.loaded) / e.total) * 100;
-					$("#curtain").attr("style", "width: " + reverseprogress + "%;");
-					if (reverseprogress < 5 && !$("#receiptcontainer").hasClass("wiggler")) {
-						$("#receiptcontainer").addClass("wiggler");
+
+
+					for(var i = 0; i < receiptElements.length; i++){
+						var receiptEl = receiptElements[i];
+						$(receiptEl).find("#curtain").attr("style", "width: " + reverseprogress + "%;");
+						if (reverseprogress < 5 && !$(receiptEl).hasClass("wiggler")) {
+							$(receiptEl).addClass("wiggler");
+						}
 					}
+
 				};
 				xhr.onload = function (e) {
 					console.log(e);
-					$("#curtain").attr("style", "width: 0%;");
-					$("#previewimg").addClass("bwfilter");
-					setTimeout(function () {
-						$("#receiptcontainer").removeClass("wiggler");
-						$("#receipt").addClass("printed");
+					for(var i = 0; i < receiptElements.length; i++){
+						var receiptEl = receiptElements[i];
+						$(receiptEl).find("#curtain").attr("style", "width: 0%;");
+						$(receiptEl).find("#previewimg").addClass("bwfilter");
 						setTimeout(function () {
-							location.reload();
-						}, 2000);
-					}, 1000);
+							$(receiptEl).removeClass("wiggler");
+							$(receiptEl).find("#receiptpadder").addClass("printed");
+							setTimeout(function () {
+								//TODO: remove el
+								$(receiptEl).remove()
+							}, 2000);
+						}, 1000);
+					}
 				};
 
 				xhr.open('POST', 'https://api.printi.me/submitimages'+document.location.pathname, true);
@@ -224,14 +285,20 @@
 				if (!ie && allimages && filereadersupport) {
 					var base64images = []; // will contain base64 encoded, compressed images
 					for (var i = 0; i < this.files.length; i++) {
+
+						var receiptEl = $("#receiptprototype")[0].children[0].cloneNode(true);//TODO
+
+						$("#receiptstack")[0].prepend(receiptEl)
+						receiptElements.push(receiptEl)
+
 						var file = this.files[i];
 						console.log(file);
 
 						var reader = new FileReader();
 						reader.onload = function (e) {
-							$("#previewimg").attr("src", e.target.result);
-							$("#preview").attr("style", "display: block;");
-							$("#formcontainer").attr("style", "display: none;");
+							$(receiptEl).find("#previewimg").attr("src", e.target.result);
+							$(receiptEl).find("#preview").attr("style", "display: block;");
+							//$("#formcontainer").attr("style", "display: none;");
 
 							var immie = document.createElement("img"); // (will not be displayed)
 
@@ -287,6 +354,14 @@
 						added += 1; if (added == toAdd) { xhr.send(data); }
 					}
 				}
+			};
+
+			document.getElementById("logocontainer").onclick = function (){
+				document.getElementById("cameracontainer").classList.toggle("showcamera");
+			};
+
+			document.getElementById("cameracontainer").onclick = function (){
+				alert("asdf");
 			};
 
 			document.getElementById("filepicker").onchange = function () {
