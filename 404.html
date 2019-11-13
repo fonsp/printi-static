@@ -176,7 +176,7 @@
 
 		<span style="display: none" id="receiptprototype">
 			<div class="receiptcontainer">
-				<div class="receiptpadder" id="receipt1">
+				<div class="receiptpadder">
 					<div class="receiptbackground">
 						<div id="preview">
 							<img id="previewimg" src="#" width="250" />
@@ -255,7 +255,7 @@
 						$(receiptEl).find("#previewimg").addClass("bwfilter");
 						setTimeout(function () {
 							$(receiptEl).removeClass("wiggler");
-							$(receiptEl).find("#receiptpadder").addClass("printed");
+							$(receiptEl).find(".receiptpadder").addClass("printed");
 							setTimeout(function () {
 								//TODO: remove el
 								$(receiptEl).remove()
