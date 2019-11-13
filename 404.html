@@ -30,20 +30,33 @@
 			align-content: center;
 			text-align: center;
 		}
-		#cameracontainer{
+		.titlesecret {
 			background-color: rgba(255, 255, 255, .5);
 			width: 100%;
-			height: 0px;
 			align-content: center;
 			text-align: center;
 			font-size: 40px;
 			cursor: pointer;
 
+			overflow: hidden;
+		}
+		#cameracontainer{
+			max-height: 0px;
+
+			transition: max-height 500ms;
+			-webkit-transition: max-height 500ms;
+		}
+		#printicambuttoncontainer{
+			height: 0px;
+
 			transition: height 500ms;
 			-webkit-transition: height 500ms;
-
 		}
-		.showcamera {
+		.showcamera{
+			max-height: 500px !important;
+		}
+
+		.showprinticambutton {
 			height: 80px !important;
 		}
 
@@ -173,11 +186,34 @@
 			animation-iteration-count: infinite;
 		}
 
+		#videoscreen {
+			width: 250px;
+			margin: auto;
+			background-color: white;
+			padding-top: 12px;
+		}
+
+		video {
+			width: 226px;
+		}
+
+		.takepicture{
+			animation: pictureflash 200ms linear;
+		}
 
 
 		@keyframes revealz {
 			0% { margin-left: 0ex; }
 			100% { margin-left: -100%; }
+		}
+
+		@keyframes pictureflash {
+			0% {
+				filter: grayscale(1.0) contrast(2.0);
+			}
+			100% {
+				filter: grayscale(0.0) contrast(1.0);
+			}
 		}
 	</style>
 </head>
@@ -190,9 +226,16 @@
 				<div style="position: absolute; left: 180px; bottom: -76px;" id="printername"><h1 id="printernametitle"></h1></div>
 			</div>
 		</div>
-		<div id="cameracontainer">
+		<div id="cameracontainer" class="titlesecret">
+			<div id="videoscreen">
+				<video playsinline autoplay></video>
+			</div>
+		</div>
+		<div id="printicambuttoncontainer" class="titlesecret">
 			<div class="printicamrotator" style="width: 8.4ex; transform: rotate(-15deg) translate(-17px, 12px);"><div class="printicamtext" style="animation-duration: 3000ms;">printiprintiprintiprinti</div></div>
 			<div class="printicamrotator" style="width: 4.2ex; transform: rotate(-15deg) translate(23px, 7px);"><div class="printicamtext">camcamcamcam</div></div>
+
+
 		</div>
 	</div>
 	<div style="margin: 0 auto; width: 250px; align-content: center; text-align: center;" id="receiptstack">
@@ -251,6 +294,9 @@
 				};
 				console.error = console.debug = console.info = console.log;
 			}
+
+			var video = document.querySelector("video");
+			window.video = video;
 
 			startUpload = function () {
 				var receiptElements = [];
@@ -379,12 +425,45 @@
 				}
 			};
 
+			window.cameraConnected = false;
+
 			document.getElementById("logocontainer").onclick = function (){
-				document.getElementById("cameracontainer").classList.toggle("showcamera");
+				if(window.cameraConnected){
+					var cl = document.getElementById("cameracontainer").classList;
+					if(cl.contains("showcamera")){
+						setTimeout(function () {
+							window.stream.getTracks()[0].stop();
+							window.cameraConnected = false;
+							video.srcObject = null;
+						}, 500);
+
+					}
+					cl.toggle("showcamera");
+				} else {
+					document.getElementById("printicambuttoncontainer").classList.toggle("showprinticambutton");
+				}
+			};
+
+			document.getElementById("printicambuttoncontainer").onclick = function (){
+				navigator.mediaDevices.getUserMedia({audio: false, video: true}).then(function (stream){
+
+					window.stream = stream;
+					video.srcObject = stream;
+					window.cameraConnected = true;
+
+					document.getElementById("printicambuttoncontainer").classList.remove("showprinticambutton");
+					document.getElementById("cameracontainer").classList.add("showcamera");
+				}).catch(function(error){
+					console.log(error);
+					window.cameraConnected = false;
+				});
 			};
 
 			document.getElementById("cameracontainer").onclick = function (){
-				alert("You found the secret!");
+				var cl = video.classList;
+				cl.remove("takepicture");
+				void video.offsetHeight;
+				cl.add("takepicture");
 			};
 
 			document.getElementById("filepicker").onchange = function () {
@@ -427,5 +506,6 @@
 		});
 
 	</script>
+	<script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
 </body>
 </html>
