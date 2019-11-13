@@ -195,6 +195,7 @@
 
 		video {
 			width: 226px;
+			pointer-events: none;
 		}
 
 		.takepicture{
@@ -445,7 +446,9 @@
 			};
 
 			document.getElementById("printicambuttoncontainer").onclick = function (){
-				navigator.mediaDevices.getUserMedia({audio: false, video: true}).then(function (stream){
+				navigator.mediaDevices.getUserMedia({audio: false, video: {
+					facingMode: "environment",
+				},}).then(function (stream){
 
 					window.stream = stream;
 					video.srcObject = stream;
