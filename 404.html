@@ -31,8 +31,8 @@
 			text-align: center;
 		}
 		#cameracontainer{
-			margin: 0 auto;
-			width: 250px;
+			background-color: rgba(255, 255, 255, .5);
+			width: 100%;
 			height: 0px;
 			align-content: center;
 			text-align: center;
@@ -169,7 +169,7 @@
 		}
 
 		.printicamtext{
-			animation: revealz 1000ms linear;
+			animation: revealz 1500ms linear;
 			animation-iteration-count: infinite;
 		}
 
@@ -191,8 +191,8 @@
 			</div>
 		</div>
 		<div id="cameracontainer">
-			<div class="printicamrotator" style="width: 8.4ex;"><div class="printicamtext" style="animation-duration: 2000ms;">printiprintiprintiprinti</div></div>
-			<div class="printicamrotator" style="width: 4.2ex;"><div class="printicamtext">camcamcamcam</div></div>
+			<div class="printicamrotator" style="width: 8.4ex; transform: rotate(-15deg) translate(-17px, 12px);"><div class="printicamtext" style="animation-duration: 3000ms;">printiprintiprintiprinti</div></div>
+			<div class="printicamrotator" style="width: 4.2ex; transform: rotate(-15deg) translate(23px, 7px);"><div class="printicamtext">camcamcamcam</div></div>
 		</div>
 	</div>
 	<div style="margin: 0 auto; width: 250px; align-content: center; text-align: center;" id="receiptstack">
@@ -384,7 +384,7 @@
 			};
 
 			document.getElementById("cameracontainer").onclick = function (){
-				alert("asdf");
+				alert("You found the secret!");
 			};
 
 			document.getElementById("filepicker").onchange = function () {
