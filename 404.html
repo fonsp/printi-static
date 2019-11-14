@@ -94,7 +94,7 @@
 			background-color: white;
 		}
 
-		#preview{
+		"preview{
 			width: 100%;
 			position: relative;
 			display: none;
@@ -110,7 +110,7 @@
 			background-color: rgba(255, 255, 255, 0.8);
 		}
 
-		#previewimg {
+		.previewimg {
 			max-width: 100%;
 			height: auto;
 			transition: 500ms filter linear;
@@ -245,8 +245,8 @@
 			<div class="receiptcontainer">
 				<div class="receiptpadder">
 					<div class="receiptbackground">
-						<div id="preview">
-							<img id="previewimg" src="#" width="250" />
+						<div class="preview">
+							<img class="previewimg" src="#" width="250" />
 							<div id="curtain"></div>
 						</div>
 					</div>
@@ -299,6 +299,47 @@
 			var video = document.querySelector("video");
 			window.video = video;
 
+			sourceToDataUri = function(source, width, height){
+				var canvas = document.createElement("canvas"); // (will not be displayed)
+
+				var PAGEWIDTH = document.location.pathname == "/" ? 576 : 384; // 576 for printi classic, 384 for printi mini
+				var vert = height > width;
+				var minorlength = vert ? width : height;
+
+				var newWidth = 0;
+				var newHeight = 0;
+
+				if(minorlength < PAGEWIDTH){
+					newWidth = width;
+					newHeight = height;
+				} else {
+					var ratio = PAGEWIDTH / minorlength;
+					newWidth = vert ? PAGEWIDTH : ratio * width;
+					newHeight = vert ? ratio * height : PAGEWIDTH;
+				}
+
+				canvas.width = newWidth;
+				canvas.height = newHeight;
+				var ctx = canvas.getContext("2d");
+				ctx.drawImage(source, 0, 0, newWidth, newHeight);
+
+				console.log(canvas);
+				console.log(canvas.width);
+				console.log(canvas.height);
+
+				// render image to a jpeg (data URI) at 70% compression quality
+				var datayumyum = canvas.toDataURL("image/jpeg", .7);
+
+				// strip header from data URI
+				var base64data = datayumyum.split(',')[1];
+
+				//TODO: destroy canvas?
+				return {
+					dataURL: datayumyum,
+					base64data: base64data,
+				};
+			};
+
 			startUpload = function () {
 				var receiptElements = [];
 
@@ -322,7 +363,7 @@
 					for(var i = 0; i < receiptElements.length; i++){
 						var receiptEl = receiptElements[i];
 						$(receiptEl).find("#curtain").attr("style", "width: 0%;");
-						$(receiptEl).find("#previewimg").addClass("bwfilter");
+						$(receiptEl).find(".previewimg").addClass("bwfilter");
 						setTimeout(function () {
 							$(receiptEl).removeClass("wiggler");
 							$(receiptEl).find(".receiptpadder").addClass("printed");
@@ -336,19 +377,22 @@
 
 				xhr.open('POST', 'https://api.printi.me/submitimages'+document.location.pathname, true);
 
-				var added = 0;
-				var toAdd = this.files.length;
-
-				console.log("added: " + added);
-				console.log("toAdd: " + toAdd);
-
 				var ua = window.navigator.userAgent;
 				var ie = (ua.indexOf('MSIE ') + ua.indexOf('Trident/') + ua.indexOf('Edge/') > -3);
 
 				var allimages = true;
-				for (var i = 0; i < this.files.length; i++) {
-					allimages = allimages && this.files[i].type.match("image.*");
+
+				var added = 0;
+				var toAdd = this.files.length;
+
+				if(!('printicamvideo' in this)){
+					for (var i = 0; i < this.files.length; i++) {
+						allimages = allimages && this.files[i].type.match("image.*");
+					}
 				}
+
+				console.log("added: " + added);
+				console.log("toAdd: " + toAdd);
 
 				var filereadersupport = 'FileReader' in window;
 
@@ -361,60 +405,55 @@
 						$("#receiptstack")[0].prepend(receiptEl)
 						receiptElements.push(receiptEl)
 
-						var file = this.files[i];
-						console.log(file);
+						if("printicamvideo" in this)
+						{
+							// in this case, we are not dealing with a file upload, but with a printi cam video snapshot
+							var result = sourceToDataUri(this.printicamvideo, this.printicamvideo.videoWidth, this.printicamvideo.videoHeight);
 
-						var reader = new FileReader();
-						reader.onload = function (e) {
-							$(receiptEl).find("#previewimg").attr("src", e.target.result);
-							$(receiptEl).find("#preview").attr("style", "display: block;");
-							//$("#formcontainer").attr("style", "display: none;");
+							$(receiptEl).find(".previewimg").attr("src", result.dataURL);
 
-							var immie = document.createElement("img"); // (will not be displayed)
+							base64images.push(result.base64data);
+							added += 1;
+							if (added == toAdd) {
+								console.log("sending...");
+								xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+								xhr.send(JSON.stringify({ images: base64images }));
+							}
 
-							immie.onload = function () {
-								console.log("immie loaded:");
-								console.log(immie.width);
-								console.log(immie.height);
-								var width = immie.width;
-								var height = immie.height;
+						} else {
 
-								var PAGEWIDTH = document.location.pathname == "/" ? 576 : 384; // 576 for printi classic, 384 for printi mini
+							var file = this.files[i];
+							console.log(file);
 
-								// downscale by a power of two (which should be fast? but probably not 😟)
-								while (Math.min(width, height) >= PAGEWIDTH * 2) {
-									width /= 2;
-									height /= 2;
-									console.log("scaling down 2x");
-								}
+							var reader = new FileReader();
+							reader.onload = function (e) {
+								$(receiptEl).find(".previewimg").attr("src", e.target.result);
+								$(receiptEl).find(".preview").attr("style", "display: block;");
+								//$("#formcontainer").attr("style", "display: none;");
 
-								var canvas = document.createElement("canvas"); // (will not be displayed)
-								canvas.width = width;
-								canvas.height = height;
-								var ctx = canvas.getContext("2d");
-								ctx.drawImage(immie, 0, 0, width, height);
+								var immie = document.createElement("img"); // (will not be displayed)
 
-								console.log(canvas);
-								console.log(canvas.width);
-								console.log(canvas.height);
+								immie.onload = function () {
+									console.log("immie loaded:");
+									console.log(immie.width);
+									console.log(immie.height);
 
-								// render image to a jpeg (data URI) at 70% compression quality
-								var datayumyum = canvas.toDataURL("image/jpeg", .7);
+									var result = sourceToDataUri(immie, immie.width, immie.height);
 
-								// strip header from data URI
-								var base64data = datayumyum.split(',')[1];
-								base64images.push(base64data);
-								added += 1;
-								if (added == toAdd) {
-									console.log("sending...");
-									xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-									xhr.send(JSON.stringify({ images: base64images }));
-								}
-							};
-							// setting the image source starts the loading process
-							immie.src = e.target.result;
+									base64images.push(result.base64data);
+									added += 1;
+									if (added == toAdd) {
+										console.log("sending...");
+										xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+										xhr.send(JSON.stringify({ images: base64images }));
+									}
+								};
+								// setting the image source starts the loading process
+								immie.src = e.target.result;
+							}
+							reader.readAsDataURL(file);
+
 						}
-						reader.readAsDataURL(file);
 					}
 				} else {
 					console.log("not downsizing; sending raw files...");
@@ -465,6 +504,19 @@
 				});
 			};
 
+			document.onvisibilitychange = function (){
+				if(window.cameraConnected){
+					if(document.visibilityState != "visible"){
+						window.stream.getTracks()[0].stop();
+						window.cameraConnected = false;
+						video.srcObject = null;
+
+						document.getElementById("printicambuttoncontainer").classList.add("showprinticambutton");
+						document.getElementById("cameracontainer").classList.remove("showcamera");
+					}
+				}
+			};
+
 			document.getElementById("cameracontainer").onclick = function (){
 				var cl = video.classList;
 				cl.remove("takepicture");
@@ -472,6 +524,11 @@
 				cl.add("takepicture");
 				video.play();
 				video.controls = false;
+
+				startUpload.call({
+					files: [null],
+					printicamvideo: video,
+				});
 			};
 
 			document.getElementById("filepicker").onchange = function () {
@@ -500,7 +557,7 @@
 								xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
 								xhr.send(JSON.stringify({ url: s }));
 
-								$("#preview").attr("style", "display: block;");
+								$(".preview").attr("style", "display: block;");
 								$("#formcontainer").attr("style", "dvisplay: none;");
 							});
 						}
