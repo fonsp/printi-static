@@ -1,27 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-	<meta name="viewport" content="width=device-width, user-scalable=no"/>
+	<meta name="viewport" content="width=device-width, user-scalable=no" />
 	<title>printi</title>
 	<meta charset="utf-8" />
-	<script>console.log("printi, by Fons van der Plas (http://github.com/fons-) 🌈");</script>
-	<meta name="theme-color" content="#FFEFEF"/>
-	<meta name="description" content="Send your pictures to the world's fastest photo printer!"/>
+	<script>
+		console.log("printi, by Fons van der Plas (http://github.com/fonsp) 🌈");
+	</script>
+	<meta name="author" content="Fons van der Plas" />
+	<link rel="author" href="https://github.com/fonsp" />
+	<link rel="license" href="https://github.com/fonsp/printi/blob/master/LICENSE" />
+	<meta name="theme-color" content="#FFEFEF" />
+	<meta name="description" content="Send your pictures to the world's fastest photo printer!" />
 	<link href="https://fonts.googleapis.com/css?family=Courgette|Itim" rel="stylesheet">
 	<style>
+		/* GENERAL PAGE LAYOUT */
+
 		body {
 			background-color: #ffe3e3;
 			margin: 0px;
 		}
 
-		main, footer {
+		main,
+		footer {
 			margin: 0 auto;
 			width: 250px;
 			align-content: center;
 			text-align: center;
 		}
 
-		#titlecontainer {
+		footer {
+			text-decoration: underline;
+			font-family: monospace;
+			font-style: italic;
+			margin-top: 400px;
+			padding-bottom: 50px;
+		}
+
+		footer a {
+			color: black;
+			opacity: .6;
+		}
+
+		/* HEADER */
+
+		header {
 			letter-spacing: 3px;
 			background-color: #ffefef;
 			font-family: 'Courgette', sans-serif;
@@ -47,6 +71,15 @@
 			margin-top: 10px;
 		}
 
+		#printernametitle {
+			position: absolute;
+			white-space: nowrap;
+			font-weight: normal;
+			opacity: .6;
+		}
+
+		/* PRINTI CAM */
+
 		.titlesecret {
 			background-color: rgba(255, 255, 255, .75);
 			width: 100%;
@@ -57,19 +90,22 @@
 
 			overflow: hidden;
 		}
-		#cameracontainer{
+
+		#cameracontainer {
 			max-height: 0px;
 
 			transition: max-height 500ms;
 			-webkit-transition: max-height 500ms;
 		}
-		#printicambuttoncontainer{
+
+		#printicambuttoncontainer {
 			height: 0px;
 
 			transition: height 500ms;
 			-webkit-transition: height 500ms;
 		}
-		.showcamera{
+
+		.showcamera {
 			max-height: 500px !important;
 		}
 
@@ -77,12 +113,58 @@
 			height: 80px !important;
 		}
 
-		#printernametitle{
-			position: absolute;
-			white-space: nowrap;
-			font-weight: normal;
-			opacity: .6;
+		.printicamrotator {
+			font-family: monospace;
+			text-decoration: underline;
+			font-size: 15px;
+			margin: auto;
+			padding-top: 10px;
+			overflow: hidden;
+			letter-spacing: .3ex;
 		}
+
+		.printicamtext {
+			animation: moveleft 1500ms linear;
+			animation-iteration-count: infinite;
+		}
+
+		@keyframes moveleft {
+			0% {
+				margin-left: 0ex;
+			}
+
+			100% {
+				margin-left: -100%;
+			}
+		}
+
+		#videoscreen {
+			width: 250px;
+			margin: auto;
+			background-color: white;
+			padding-top: 12px;
+		}
+
+		video {
+			width: 226px;
+			pointer-events: none;
+		}
+
+		.takepicture {
+			animation: pictureflash 200ms linear;
+		}
+
+		@keyframes pictureflash {
+			0% {
+				filter: grayscale(1.0) contrast(2.0);
+			}
+
+			100% {
+				filter: grayscale(0.0) contrast(1.0);
+			}
+		}
+
+		/* MAIN */
 
 		.receiptcontainer {
 			overflow: hidden;
@@ -127,30 +209,17 @@
 			-webkit-transition: 500ms -webkit-filter linear;
 		}
 
+		.bwfilter {
+			filter: grayscale(100%);
+			-webkit-filter: grayscale(100%);
+		}
+
 		#formcontainer {
 			overflow-x: hidden;
 		}
 
-		footer {
-			text-decoration: underline;
-			font-family: monospace;
-			font-style: italic;
-			margin-top: 400px;
-			padding-bottom: 50px;
-		}
-
-		footer a {
-			color: black;
-			opacity: .6;
-		}
-
 		.printed {
-			margin-top: -1000px!important;
-		}
-
-		.bwfilter {
-			filter: grayscale(100%);
-			-webkit-filter: grayscale(100%);
+			margin-top: -1000px !important;
 		}
 
 		.wiggler {
@@ -160,71 +229,31 @@
 			-webkit-animation-iteration-count: infinite;
 		}
 
-		@keyframes fadeout {
-			0% {
-				opacity: .6;
-			}
-			50% {opacity: .6; }
-			100% {opacity: 0; }
-		}
-
 		@keyframes wiggle {
-			0% { transform: rotate(0deg); }
-			25% { transform: rotate(-1deg); }
-			50% { transform: rotate(0deg); }
-			75% { transform: rotate(1deg); }
-			100% { transform: rotate(0deg); }
-		}
-
-		.printicamrotator{
-			font-family: monospace;
-			text-decoration: underline;
-			font-size: 15px;
-			margin: auto;
-			padding-top: 10px;
-			overflow: hidden;
-			letter-spacing: .3ex;
-		}
-
-		.printicamtext{
-			animation: moveleft 1500ms linear;
-			animation-iteration-count: infinite;
-		}
-
-		#videoscreen {
-			width: 250px;
-			margin: auto;
-			background-color: white;
-			padding-top: 12px;
-		}
-
-		video {
-			width: 226px;
-			pointer-events: none;
-		}
-
-		.takepicture{
-			animation: pictureflash 200ms linear;
-		}
-
-
-		@keyframes moveleft {
-			0% { margin-left: 0ex; }
-			100% { margin-left: -100%; }
-		}
-
-		@keyframes pictureflash {
 			0% {
-				filter: grayscale(1.0) contrast(2.0);
+				transform: rotate(0deg);
 			}
+
+			25% {
+				transform: rotate(-1deg);
+			}
+
+			50% {
+				transform: rotate(0deg);
+			}
+
+			75% {
+				transform: rotate(1deg);
+			}
+
 			100% {
-				filter: grayscale(0.0) contrast(1.0);
+				transform: rotate(0deg);
 			}
 		}
 	</style>
 </head>
 <body>
-	<header id="titlecontainer">
+	<header>
 		<div id="logocontainer">
 			<h1><img src="Content/printi_logo_transparent.svg" width="100" height="34" alt="printi" title="printi" /><span id="printernametitle"></span></h1>
 		</div>
@@ -234,9 +263,13 @@
 			</div>
 		</div>
 		<div id="printicambuttoncontainer" class="titlesecret">
-		<div class="printicamrotator" style="width: 8.4ex; transform: rotate(-15deg) translate(-17px, 12px);"><div class="printicamtext" style="animation-duration: 3000ms;">printiprintiprintiprinti</div></div>
-		<div class="printicamrotator" style="width: 4.2ex; transform: rotate(-15deg) translate(23px, 7px);"><div class="printicamtext">camcamcamcam</div></div>
-	</div>
+			<div class="printicamrotator" style="width: 8.4ex; transform: rotate(-15deg) translate(-17px, 12px);">
+				<div class="printicamtext" style="animation-duration: 3000ms;">printiprintiprintiprinti</div>
+			</div>
+			<div class="printicamrotator" style="width: 4.2ex; transform: rotate(-15deg) translate(23px, 7px);">
+				<div class="printicamtext">camcamcamcam</div>
+			</div>
+		</div>
 	</header>
 
 	<main id="receiptstack">
@@ -271,25 +304,24 @@
 	</main>
 
 	<footer>
-			<a href="https://github.com/fons-/printi/blob/master/README.md">What is printi?</a>
-		</footer>
+		<a href="https://github.com/fons-/printi/blob/master/README.md" rel="help">What is printi?</a>
+	</footer>
 
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script>
-		if(document.location.pathname != "/"){
+		if (document.location.pathname != "/") {
 			$("#printernametitle").text(decodeURI(document.location.pathname))
 		}
-		$(document).ready(function () {
-			if(window.location.search.indexOf("log") != -1)
-			{
+		$(document).ready(function() {
+			if (window.location.search.indexOf("log") != -1) {
 				if (typeof console != "undefined")
 					if (typeof console.log != 'undefined')
 						console.olog = console.log;
 					else
-						console.olog = function () { };
+						console.olog = function() {};
 
-				console.log = function (message) {
+				console.log = function(message) {
 					console.olog(message);
 					$('#logje').prepend('<p>' + message + '</p>');
 				};
@@ -299,7 +331,7 @@
 			var video = document.querySelector("video");
 			window.video = video;
 
-			sourceToDataUri = function(source, width, height){
+			sourceToDataUri = function(source, width, height) {
 				var canvas = document.createElement("canvas"); // (will not be displayed)
 
 				var PAGEWIDTH = document.location.pathname == "/" ? 576 : 384; // 576 for printi classic, 384 for printi mini
@@ -309,7 +341,7 @@
 				var newWidth = 0;
 				var newHeight = 0;
 
-				if(minorlength < PAGEWIDTH){
+				if (minorlength < PAGEWIDTH) {
 					newWidth = width;
 					newHeight = height;
 				} else {
@@ -340,16 +372,16 @@
 				};
 			};
 
-			startUpload = function () {
+			startUpload = function() {
 				var receiptElements = [];
 
 				var xhr = new XMLHttpRequest();
-				xhr.upload.onprogress = function (e) {
+				xhr.upload.onprogress = function(e) {
 					console.log(e);
 					var reverseprogress = ((e.total - e.loaded) / e.total) * 100;
 
 
-					for(var i = 0; i < receiptElements.length; i++){
+					for (var i = 0; i < receiptElements.length; i++) {
 						var receiptEl = receiptElements[i];
 						$(receiptEl).find("#curtain").attr("style", "width: " + reverseprogress + "%;");
 						if (reverseprogress < 5 && !$(receiptEl).hasClass("wiggler")) {
@@ -358,16 +390,16 @@
 					}
 
 				};
-				xhr.onload = function (e) {
+				xhr.onload = function(e) {
 					console.log(e);
-					for(var i = 0; i < receiptElements.length; i++){
+					for (var i = 0; i < receiptElements.length; i++) {
 						var receiptEl = receiptElements[i];
 						$(receiptEl).find("#curtain").attr("style", "width: 0%;");
 						$(receiptEl).find(".previewimg").addClass("bwfilter");
-						setTimeout(function () {
+						setTimeout(function() {
 							$(receiptEl).removeClass("wiggler");
 							$(receiptEl).find(".receiptpadder").addClass("printed");
-							setTimeout(function () {
+							setTimeout(function() {
 								//TODO: remove el
 								$(receiptEl).remove()
 							}, 2000);
@@ -375,7 +407,7 @@
 					}
 				};
 
-				xhr.open('POST', 'https://api.printi.me/submitimages'+document.location.pathname, true);
+				xhr.open('POST', 'https://api.printi.me/submitimages' + document.location.pathname, true);
 
 				var ua = window.navigator.userAgent;
 				var ie = (ua.indexOf('MSIE ') + ua.indexOf('Trident/') + ua.indexOf('Edge/') > -3);
@@ -385,7 +417,7 @@
 				var added = 0;
 				var toAdd = this.files.length;
 
-				if(!('printicamvideo' in this)){
+				if (!('printicamvideo' in this)) {
 					for (var i = 0; i < this.files.length; i++) {
 						allimages = allimages && this.files[i].type.match("image.*");
 					}
@@ -400,13 +432,12 @@
 					var base64images = []; // will contain base64 encoded, compressed images
 					for (var i = 0; i < this.files.length; i++) {
 
-						var receiptEl = $("#receiptprototype")[0].children[0].cloneNode(true);//TODO
+						var receiptEl = $("#receiptprototype")[0].children[0].cloneNode(true); //TODO
 
 						$("#receiptstack")[0].prepend(receiptEl)
 						receiptElements.push(receiptEl)
 
-						if("printicamvideo" in this)
-						{
+						if ("printicamvideo" in this) {
 							// in this case, we are not dealing with a file upload, but with a printi cam video snapshot
 							var result = sourceToDataUri(this.printicamvideo, this.printicamvideo.videoWidth, this.printicamvideo.videoHeight);
 
@@ -417,7 +448,9 @@
 							if (added == toAdd) {
 								console.log("sending...");
 								xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-								xhr.send(JSON.stringify({ images: base64images }));
+								xhr.send(JSON.stringify({
+									images: base64images
+								}));
 							}
 
 						} else {
@@ -426,14 +459,14 @@
 							console.log(file);
 
 							var reader = new FileReader();
-							reader.onload = function (e) {
+							reader.onload = function(e) {
 								$(receiptEl).find(".previewimg").attr("src", e.target.result);
 								$(receiptEl).find(".preview").attr("style", "display: block;");
 								//$("#formcontainer").attr("style", "display: none;");
 
 								var immie = document.createElement("img"); // (will not be displayed)
 
-								immie.onload = function () {
+								immie.onload = function() {
 									console.log("immie loaded:");
 									console.log(immie.width);
 									console.log(immie.height);
@@ -445,7 +478,9 @@
 									if (added == toAdd) {
 										console.log("sending...");
 										xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-										xhr.send(JSON.stringify({ images: base64images }));
+										xhr.send(JSON.stringify({
+											images: base64images
+										}));
 									}
 								};
 								// setting the image source starts the loading process
@@ -460,18 +495,21 @@
 					var data = new FormData();
 					for (var i = 0; i < this.files.length; i++) {
 						data.append('file' + i, this.files[i]);
-						added += 1; if (added == toAdd) { xhr.send(data); }
+						added += 1;
+						if (added == toAdd) {
+							xhr.send(data);
+						}
 					}
 				}
 			};
 
 			window.cameraConnected = false;
 
-			document.getElementById("logocontainer").onclick = function (){
-				if(window.cameraConnected){
+			document.getElementById("logocontainer").onclick = function() {
+				if (window.cameraConnected) {
 					var cl = document.getElementById("cameracontainer").classList;
-					if(cl.contains("showcamera")){
-						setTimeout(function () {
+					if (cl.contains("showcamera")) {
+						setTimeout(function() {
 							window.stream.getTracks()[0].stop();
 							window.cameraConnected = false;
 							video.srcObject = null;
@@ -484,10 +522,13 @@
 				}
 			};
 
-			document.getElementById("printicambuttoncontainer").onclick = function (){
-				navigator.mediaDevices.getUserMedia({audio: false, video: {
-					facingMode: "environment",
-				},}).then(function (stream){
+			document.getElementById("printicambuttoncontainer").onclick = function() {
+				navigator.mediaDevices.getUserMedia({
+					audio: false,
+					video: {
+						facingMode: "environment",
+					},
+				}).then(function(stream) {
 
 					window.stream = stream;
 					video.srcObject = stream;
@@ -498,15 +539,15 @@
 
 					document.getElementById("printicambuttoncontainer").classList.remove("showprinticambutton");
 					document.getElementById("cameracontainer").classList.add("showcamera");
-				}).catch(function(error){
+				}).catch(function(error) {
 					console.log(error);
 					window.cameraConnected = false;
 				});
 			};
 
-			document.onvisibilitychange = function (){
-				if(window.cameraConnected){
-					if(document.visibilityState != "visible"){
+			document.onvisibilitychange = function() {
+				if (window.cameraConnected) {
+					if (document.visibilityState != "visible") {
 						window.stream.getTracks()[0].stop();
 						window.cameraConnected = false;
 						video.srcObject = null;
@@ -517,7 +558,7 @@
 				}
 			};
 
-			document.getElementById("cameracontainer").onclick = function (){
+			document.getElementById("cameracontainer").onclick = function() {
 				var cl = video.classList;
 				cl.remove("takepicture");
 				void video.offsetHeight;
@@ -531,11 +572,11 @@
 				});
 			};
 
-			document.getElementById("filepicker").onchange = function () {
+			document.getElementById("filepicker").onchange = function() {
 				startUpload.call(this);
 			};
 
-			document.addEventListener('paste', function (e) {
+			document.addEventListener('paste', function(e) {
 				if (e.clipboardData) {
 					var items = e.clipboardData.items;
 					var imagesPasted = false;
@@ -550,12 +591,14 @@
 						}
 						console.log(items[i].type)
 						if (items[i].type.indexOf("text") >= 0) {
-							items[i].getAsString(function (s) {
+							items[i].getAsString(function(s) {
 
 								var xhr = new XMLHttpRequest();
 								xhr.open('POST', 'https://url.printi.me/api/url/printi', true);
 								xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-								xhr.send(JSON.stringify({ url: s }));
+								xhr.send(JSON.stringify({
+									url: s
+								}));
 
 								$(".preview").attr("style", "display: block;");
 								$("#formcontainer").attr("style", "dvisplay: none;");
@@ -569,8 +612,8 @@
 				}
 			}, false);
 		});
-
 	</script>
 	<script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
 </body>
+
 </html>
