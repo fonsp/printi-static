@@ -1,19 +1,26 @@
 <!DOCTYPE html>
-
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
 <head>
-	<script>console.log("printi, by Fons van der Plas (http://github.com/fons-) 🌈");</script>
-		<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, user-scalable=no"/>
+	<title>printi</title>
+	<meta charset="utf-8" />
+	<script>console.log("printi, by Fons van der Plas (http://github.com/fons-) 🌈");</script>
 	<meta name="theme-color" content="#FFEFEF"/>
 	<meta name="description" content="Send your pictures to the world's fastest photo printer!"/>
 	<link href="https://fonts.googleapis.com/css?family=Courgette|Itim" rel="stylesheet">
-		<title>printi</title>
 	<style>
 		body {
 			background-color: #ffe3e3;
 			margin: 0px;
 		}
+
+		main, footer {
+			margin: 0 auto;
+			width: 250px;
+			align-content: center;
+			text-align: center;
+		}
+
 		#titlecontainer {
 			letter-spacing: 3px;
 			background-color: #ffefef;
@@ -21,6 +28,7 @@
 			width: 100%;
 			overflow: hidden;
 		}
+
 		#logocontainer {
 			margin: 0 auto;
 			width: 250px;
@@ -30,8 +38,17 @@
 			align-content: center;
 			text-align: center;
 		}
+
+		#logocontainer img {
+			margin-bottom: -8px;
+		}
+
+		#logocontainer h1 {
+			margin-top: 10px;
+		}
+
 		.titlesecret {
-			background-color: rgba(255, 255, 255, .5);
+			background-color: rgba(255, 255, 255, .75);
 			width: 100%;
 			align-content: center;
 			text-align: center;
@@ -60,14 +77,13 @@
 			height: 80px !important;
 		}
 
-		#printername {
-			text-align: left;
-			width: 1000px;
+		#printernametitle{
+			position: absolute;
+			white-space: nowrap;
+			font-weight: normal;
 			opacity: .6;
 		}
-		h1 {
-			font-weight: normal;
-		}
+
 		.receiptcontainer {
 			overflow: hidden;
 		}
@@ -94,12 +110,6 @@
 			background-color: white;
 		}
 
-		"preview{
-			width: 100%;
-			position: relative;
-			display: none;
-		}
-
 		#curtain {
 			transition: 200ms linear left;
 			position: absolute;
@@ -121,15 +131,15 @@
 			overflow-x: hidden;
 		}
 
-		#explain {
-
+		footer {
 			text-decoration: underline;
-			font-family: 'Courgette';
+			font-family: monospace;
+			font-style: italic;
 			margin-top: 400px;
 			padding-bottom: 50px;
 		}
 
-		#explain a {
+		footer a {
 			color: black;
 			opacity: .6;
 		}
@@ -166,11 +176,6 @@
 			100% { transform: rotate(0deg); }
 		}
 
-		@keyframes reveal {
-			0% { height: 0px; }
-			100% { height: 80px; }
-		}
-
 		.printicamrotator{
 			font-family: monospace;
 			text-decoration: underline;
@@ -182,7 +187,7 @@
 		}
 
 		.printicamtext{
-			animation: revealz 1500ms linear;
+			animation: moveleft 1500ms linear;
 			animation-iteration-count: infinite;
 		}
 
@@ -203,7 +208,7 @@
 		}
 
 
-		@keyframes revealz {
+		@keyframes moveleft {
 			0% { margin-left: 0ex; }
 			100% { margin-left: -100%; }
 		}
@@ -219,13 +224,9 @@
 	</style>
 </head>
 <body>
-	<div id="titlecontainer">
+	<header id="titlecontainer">
 		<div id="logocontainer">
-			<div style="position: relative; ">
-
-				<div style="position: absolute; width: 100%;"><h1><img src="Content/printi_logo_transparent.svg" width="100" height="34" alt="printi" title="printi" /></h1></div>
-				<div style="position: absolute; left: 180px; bottom: -76px;" id="printername"><h1 id="printernametitle"></h1></div>
-			</div>
+			<h1><img src="Content/printi_logo_transparent.svg" width="100" height="34" alt="printi" title="printi" /><span id="printernametitle"></span></h1>
 		</div>
 		<div id="cameracontainer" class="titlesecret">
 			<div id="videoscreen">
@@ -233,14 +234,12 @@
 			</div>
 		</div>
 		<div id="printicambuttoncontainer" class="titlesecret">
-			<div class="printicamrotator" style="width: 8.4ex; transform: rotate(-15deg) translate(-17px, 12px);"><div class="printicamtext" style="animation-duration: 3000ms;">printiprintiprintiprinti</div></div>
-			<div class="printicamrotator" style="width: 4.2ex; transform: rotate(-15deg) translate(23px, 7px);"><div class="printicamtext">camcamcamcam</div></div>
-
-
-		</div>
+		<div class="printicamrotator" style="width: 8.4ex; transform: rotate(-15deg) translate(-17px, 12px);"><div class="printicamtext" style="animation-duration: 3000ms;">printiprintiprintiprinti</div></div>
+		<div class="printicamrotator" style="width: 4.2ex; transform: rotate(-15deg) translate(23px, 7px);"><div class="printicamtext">camcamcamcam</div></div>
 	</div>
-	<div style="margin: 0 auto; width: 250px; align-content: center; text-align: center;" id="receiptstack">
+	</header>
 
+	<main id="receiptstack">
 		<span style="display: none" id="receiptprototype">
 			<div class="receiptcontainer">
 				<div class="receiptpadder">
@@ -267,12 +266,13 @@
 				</div>
 			</div>
 		</div>
-		<div id="explain">
-			<a href="https://github.com/fons-/printi/blob/master/README.md">What is printi?</a>
-		</div>
 		<span id="logje"></span>
 		<iframe name="responseframe" style="display: none;"></iframe>
-	</div>
+	</main>
+
+	<footer>
+			<a href="https://github.com/fons-/printi/blob/master/README.md">What is printi?</a>
+		</footer>
 
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
