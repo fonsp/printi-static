@@ -43,6 +43,16 @@
 			opacity: .6;
 		}
 
+		#logje {
+			text-align: left;
+			font-family: monospace;
+		}
+
+		#logje p::before {
+			content: "> ";
+			opacity: .5;
+		}
+
 		/* HEADER */
 
 		header {
@@ -66,6 +76,8 @@
 
 		#logocontainer img {
 			margin-bottom: -8px;
+			margin-left: 5px;
+			margin-right: 5px;
 		}
 
 		#logocontainer h1 {
@@ -169,6 +181,8 @@
 
 		.receiptcontainer {
 			overflow: hidden;
+			font-family: monospace;
+			overflow-wrap: break-word;
 		}
 
 		.receiptpadder {
@@ -251,8 +265,28 @@
 				transform: rotate(0deg);
 			}
 		}
+
+		.fadein {
+			animation: fadein 1000ms linear;
+		}
+
+		@keyframes fadein {
+			0% {
+				opacity: 0%;
+			}
+
+			80% {
+				opacity: 0%;
+
+			}
+
+			100% {
+				opacity: 100%;
+			}
+		}
 	</style>
 </head>
+
 <body>
 	<header>
 		<div id="logocontainer">
@@ -287,8 +321,8 @@
 			</div>
 		</span>
 
-		<div class="receiptcontainer">
-			<div class="receiptpadder" id="receiptupload">
+		<div class="receiptcontainer" id="receiptupload">
+			<div class="receiptpadder">
 				<div class="receiptbackground">
 					<div id="formcontainer">
 						<form id="leform" action="" method="post" enctype="multipart/form-data" target="responseframe">
@@ -308,13 +342,13 @@
 		<a href="https://github.com/fons-/printi/blob/master/README.md" rel="help">What is printi?</a>
 	</footer>
 
-
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script>
-		if (document.location.pathname != "/") {
-			$("#printernametitle").text(decodeURI(document.location.pathname))
-		}
-		$(document).ready(function() {
+		document.addEventListener("DOMContentLoaded", function() {
+
+			if (document.location.pathname != "/") {
+				document.querySelector("#printernametitle").textContent = decodeURI(document.location.pathname)
+			}
+
 			if (window.location.search.indexOf("log") != -1) {
 				if (typeof console != "undefined")
 					if (typeof console.log != 'undefined')
@@ -324,25 +358,34 @@
 
 				console.log = function(message) {
 					console.olog(message);
-					$('#logje').prepend('<p>' + message + '</p>');
+
+					var messageEl = document.createElement("p");
+					messageEl.innerText = message;
+					document.querySelector('#logje').prepend(messageEl);
 				};
 				console.error = console.debug = console.info = console.log;
+
 			}
+			console.log("Now logging on page 📜");
 
 			var video = document.querySelector("video");
 			window.video = video;
 
+			// Renders the image source onto a downscaled canvas and returns a jpeg/png compressed DataURI
 			sourceToDataUri = function(source, width, height) {
+				console.log(source);
+
 				var canvas = document.createElement("canvas"); // (will not be displayed)
 
 				var PAGEWIDTH = document.location.pathname == "/" ? 576 : 384; // 576 for printi classic, 384 for printi mini
+
 				var vert = height > width;
 				var minorlength = vert ? width : height;
 
 				var newWidth = 0;
 				var newHeight = 0;
 
-				if (minorlength < PAGEWIDTH) {
+				if (minorlength <= PAGEWIDTH) {
 					newWidth = width;
 					newHeight = height;
 				} else {
@@ -360,9 +403,16 @@
 				console.log(canvas.width);
 				console.log(canvas.height);
 
-				// render image to a jpeg (data URI) at 70% compression quality
-				var datayumyum = canvas.toDataURL("image/jpeg", .7);
+				var datayumyum;
 
+				if (minorlength <= PAGEWIDTH) {
+					// uploaded file was probably purposefully cropped to printi dimensions;
+					// we will not compress
+					datayumyum = canvas.toDataURL("image/png");
+				} else {
+					// render image to a jpeg (data URI) at 70% compression quality
+					datayumyum = canvas.toDataURL("image/jpeg", .7);
+				}
 				// strip header from data URI
 				var base64data = datayumyum.split(',')[1];
 
@@ -373,136 +423,165 @@
 				};
 			};
 
-			startUpload = function() {
-				var receiptElements = [];
+			// Performs the image compression, networking and UI of a single file or video.
+			uploadImage = function(fileSource, videoSource) {
+				// Will hold the DOM element of the receipt corresponding to this image.
+				var receiptEl = document.querySelector("#receiptprototype > div").cloneNode(true);
+				document.querySelector("#receiptstack").prepend(receiptEl);
 
 				var xhr = new XMLHttpRequest();
+
+				// We first define the (graphical) event handlers for loading progress and loading completion.
 				xhr.upload.onprogress = function(e) {
 					console.log(e);
+					console.log(xhr);
 					var reverseprogress = ((e.total - e.loaded) / e.total) * 100;
 
-
-					for (var i = 0; i < receiptElements.length; i++) {
-						var receiptEl = receiptElements[i];
-						$(receiptEl).find("#curtain").attr("style", "width: " + reverseprogress + "%;");
-						if (reverseprogress < 5 && !$(receiptEl).hasClass("wiggler")) {
-							$(receiptEl).addClass("wiggler");
-						}
+					receiptEl.querySelector("#curtain").setAttribute("style", "width: " + reverseprogress + "%;");
+					if (reverseprogress < 5 && !receiptEl.classList.contains("wiggler")) {
+						receiptEl.classList.add("wiggler");
 					}
 
 				};
+
 				xhr.onload = function(e) {
 					console.log(e);
-					for (var i = 0; i < receiptElements.length; i++) {
-						var receiptEl = receiptElements[i];
-						$(receiptEl).find("#curtain").attr("style", "width: 0%;");
-						$(receiptEl).find(".previewimg").addClass("bwfilter");
+
+					receiptEl.querySelector("#curtain").setAttribute("style", "width: 0%;");
+					receiptEl.querySelector(".previewimg").classList.add("bwfilter");
+					setTimeout(function() {
+						receiptEl.classList.remove("wiggler");
+						receiptEl.querySelector(".receiptpadder").classList.add("printed");
 						setTimeout(function() {
-							$(receiptEl).removeClass("wiggler");
-							$(receiptEl).find(".receiptpadder").addClass("printed");
-							setTimeout(function() {
-								//TODO: remove el
-								$(receiptEl).remove()
-							}, 2000);
-						}, 1000);
-					}
+							//TODO: remove el
+							receiptEl.remove()
+						}, 2000);
+					}, 1000);
 				};
+
+				xhr.onerror = console.log;
+				xhr.onabort = console.log;
 
 				xhr.open('POST', 'https://api.printi.me/submitimages' + document.location.pathname, true);
 
 				var ua = window.navigator.userAgent;
 				var ie = (ua.indexOf('MSIE ') + ua.indexOf('Trident/') + ua.indexOf('Edge/') > -3);
 
-				var allimages = true;
-
-				var added = 0;
-				var toAdd = this.files.length;
-
-				if (!('printicamvideo' in this)) {
-					for (var i = 0; i < this.files.length; i++) {
-						allimages = allimages && this.files[i].type.match("image.*");
-					}
-				}
-
-				console.log("added: " + added);
-				console.log("toAdd: " + toAdd);
+				var isNotAnImageFile = videoSource === null && (!fileSource.type.match("image.*"));
 
 				var filereadersupport = 'FileReader' in window;
 
-				if (!ie && allimages && filereadersupport) {
-					var base64images = []; // will contain base64 encoded, compressed images
-					for (var i = 0; i < this.files.length; i++) {
+				if (!ie && !isNotAnImageFile && filereadersupport) {
+					// We will compress the image, and send it to the API as a base64 encoded string.
+					xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
 
-						var receiptEl = $("#receiptprototype")[0].children[0].cloneNode(true); //TODO
+					if (videoSource !== null) {
+						// in this case, we are not dealing with a file upload, but with a printi cam video snapshot
+						var result = sourceToDataUri(videoSource, videoSource.videoWidth, videoSource.videoHeight);
 
-						$("#receiptstack")[0].prepend(receiptEl)
-						receiptElements.push(receiptEl)
+						receiptEl.querySelector(".previewimg").setAttribute("src", result.dataURL);
 
-						if ("printicamvideo" in this) {
-							// in this case, we are not dealing with a file upload, but with a printi cam video snapshot
-							var result = sourceToDataUri(this.printicamvideo, this.printicamvideo.videoWidth, this.printicamvideo.videoHeight);
+						console.log("sending...");
+						xhr.send(JSON.stringify({
+							images: [result.base64data]
+						}));
 
-							$(receiptEl).find(".previewimg").attr("src", result.dataURL);
+					} else {
+						console.log(fileSource);
 
-							base64images.push(result.base64data);
-							added += 1;
-							if (added == toAdd) {
+						var reader = new FileReader();
+						reader.onload = function(e) {
+							receiptEl.querySelector(".previewimg").setAttribute("src", e.target.result);
+
+							var immie = document.createElement("img"); // (will not be displayed)
+
+							immie.onload = function() {
+								console.log("immie loaded:");
+								console.log(immie.width);
+								console.log(immie.height);
+
+								var result = sourceToDataUri(immie, immie.width, immie.height);
+
 								console.log("sending...");
-								xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
 								xhr.send(JSON.stringify({
-									images: base64images
+									images: [result.base64data]
 								}));
-							}
 
-						} else {
-
-							var file = this.files[i];
-							console.log(file);
-
-							var reader = new FileReader();
-							reader.onload = function(e) {
-								$(receiptEl).find(".previewimg").attr("src", e.target.result);
-								$(receiptEl).find(".preview").attr("style", "display: block;");
-								//$("#formcontainer").attr("style", "display: none;");
-
-								var immie = document.createElement("img"); // (will not be displayed)
-
-								immie.onload = function() {
-									console.log("immie loaded:");
-									console.log(immie.width);
-									console.log(immie.height);
-
-									var result = sourceToDataUri(immie, immie.width, immie.height);
-
-									base64images.push(result.base64data);
-									added += 1;
-									if (added == toAdd) {
-										console.log("sending...");
-										xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-										xhr.send(JSON.stringify({
-											images: base64images
-										}));
-									}
-								};
-								// setting the image source starts the loading process
-								immie.src = e.target.result;
-							}
-							reader.readAsDataURL(file);
-
+							};
+							// setting the image source starts the loading process
+							immie.src = e.target.result;
 						}
+						// start the file reading process
+						reader.readAsDataURL(fileSource);
 					}
+
 				} else {
 					console.log("not downsizing; sending raw files...");
+
+					var previewEl = receiptEl.querySelector(".preview");
+					var filenameP = document.createElement("p");
+					filenameP.innerText = fileSource.name;
+					previewEl.querySelector("img").remove();
+					previewEl.prepend(filenameP);
+
 					var data = new FormData();
-					for (var i = 0; i < this.files.length; i++) {
-						data.append('file' + i, this.files[i]);
-						added += 1;
-						if (added == toAdd) {
-							xhr.send(data);
-						}
-					}
+					data.append("file0", fileSource);
+					xhr.send(data);
 				}
 			};
+
+			document.getElementById("filepicker").onchange = function() {
+				for (var i = 0; i < this.files.length; i++) {
+					uploadImage(this.files[i], null);
+				}
+				// To make it look like a new form was created:
+				var receiptUploadEl = document.getElementById("receiptupload");
+				receiptUploadEl.classList.remove("fadein");
+				void receiptUploadEl.offsetHeight;
+				receiptUploadEl.classList.add("fadein");
+				receiptUploadEl.querySelector("input").value = "";
+			};
+
+			document.addEventListener('paste', function(e) {
+				if (e.clipboardData) {
+					var items = e.clipboardData.items;
+					var pastedFiles = [];
+					for (var i = 0; i < items.length; i++) {
+						console.log(items[i].type)
+
+						// if an image is pasted, convert it to a file and add it to the file list for uploading.
+						if (items[i].type.indexOf("image") >= 0) {
+							var blob = items[i].getAsFile();
+							pastedFiles.push(blob);
+						}
+
+						// if text is pasted, we assume that it is a URL, and it will be sent to the URL server (which is actually deprecated...)
+						if (items[i].type.indexOf("text") >= 0) {
+							/*items[i].getAsString(function(s) {
+
+								var xhr = new XMLHttpRequest();
+								xhr.open('POST', 'https://url.printi.me/api/url/printi', true);
+								xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+								xhr.send(JSON.stringify({
+									url: s
+								}));
+
+								document.querySelector(".preview").setAttribute("style", "display: block;");
+								//document.querySelector("#formcontainer").setAttribute("style", "display: none;");
+							});*/
+							alert("Oops! URL support has been deprecated, but the printi mail feature might be useful 🙊")
+						}
+					}
+
+					for (var i = 0; i < pastedFiles.length; i++) {
+						uploadImage(pastedFiles[i], null);
+					}
+					e.preventDefault();
+				}
+			}, false);
+
+
+			/* PRINTI CAM */
 
 			window.cameraConnected = false;
 
@@ -546,6 +625,7 @@
 				});
 			};
 
+			// Turns off the camera when the page is out of focus
 			document.onvisibilitychange = function() {
 				if (window.cameraConnected) {
 					if (document.visibilityState != "visible") {
@@ -567,51 +647,8 @@
 				video.play();
 				video.controls = false;
 
-				startUpload.call({
-					files: [null],
-					printicamvideo: video,
-				});
+				uploadImage(null, video);
 			};
-
-			document.getElementById("filepicker").onchange = function() {
-				startUpload.call(this);
-			};
-
-			document.addEventListener('paste', function(e) {
-				if (e.clipboardData) {
-					var items = e.clipboardData.items;
-					var imagesPasted = false;
-					// if an image is pasted, convert it to a file and add it to the (fake) this.files list
-					// then pass `this` to the startUpload function.
-					this.files = [];
-					for (var i = 0; i < items.length; i++) {
-						if (items[i].type.indexOf("image") >= 0) {
-							imagesPasted = true;
-							var blob = items[i].getAsFile();
-							this.files.push(blob);
-						}
-						console.log(items[i].type)
-						if (items[i].type.indexOf("text") >= 0) {
-							items[i].getAsString(function(s) {
-
-								var xhr = new XMLHttpRequest();
-								xhr.open('POST', 'https://url.printi.me/api/url/printi', true);
-								xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-								xhr.send(JSON.stringify({
-									url: s
-								}));
-
-								$(".preview").attr("style", "display: block;");
-								$("#formcontainer").attr("style", "dvisplay: none;");
-							});
-						}
-					}
-					if (imagesPasted) {
-						startUpload.call(this);
-					}
-					e.preventDefault();
-				}
-			}, false);
 		});
 	</script>
 	<script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
