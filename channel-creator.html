@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -13,13 +12,14 @@
 	<link rel="author" href="https://github.com/fonsp" />
 	<link rel="license" href="https://github.com/fonsp/printi/blob/master/LICENSE" />
 	<meta name="theme-color" content="#FFEFEF" />
-	<meta name="description" content="Send your pictures to the world's fastest photo printer!" />
+	<meta name="description" content="printi channel editor" />
 	<link href="https://fonts.googleapis.com/css?family=Courgette|Itim" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,400i&display=swap&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese" rel="stylesheet">
 	<style>
 		/* GENERAL PAGE LAYOUT */
 
 		body {
-			background-color: #ffe3e3;
+			background-color: #001c1c;
 			margin: 0px;
 		}
 
@@ -57,17 +57,18 @@
 
 		header {
 			letter-spacing: 3px;
-			background-color: #ffefef;
+			background-color: #001010;
 			font-family: 'Courgette', sans-serif;
 			width: 100%;
 			overflow: hidden;
 			text-align: center;
+			color: white;
 		}
 
 		#logocontainer {
 			margin: 0 auto;
 			width: 250px;
-			padding-top: 16px;
+			padding-top: 20px;
 			padding-bottom: 0px;
 			align-content: center;
 			text-align: center;
@@ -75,17 +76,26 @@
 		}
 
 		#logocontainer img {
-			margin-left: -200px;
 			margin-right: 15px;
+			filter: invert(100%);
+			-webkit-filter: invert(100%);
 		}
 
 		#logocontainer h1 {
 			margin-top: 10px;
 		}
 
-		#printernametitle {
+		@media (min-width: 400px) {
+			#printernametitle {
+				position: absolute;
+			}
 
-			position: absolute;
+			#logocontainer img {
+				margin-left: -221px;
+			}
+		}
+
+		#printernametitle {
 			white-space: nowrap;
 			font-weight: normal;
 			font-family: monospace;
@@ -103,36 +113,132 @@
 			border-radius: 5px;
 		}
 
-		iframe{
+		.CodeMirror {
+			height: auto !important;
+			min-height: 200px;
+			font-family: 'Roboto Mono', monospace !important;
+			font-size: 14px;
+			border: 6px solid pink;
+			border-radius: 6px;
+			box-shadow: 0 0 20px 0px rgba(0, 0, 0, .3);
+			z-index: 2;
+		}
+
+
+		#previewclickarea {
+			background: rgba(0, 0, 0, .9);
+			border: 6px solid white;
+			border-radius: 6px;
+	    width: calc(100% - 12px);
+	    margin-top: -12px;
+			padding-top: 6px;
+		}
+
+		@media (min-width: 450px) {
+
+			#previewclickarea {
+				width: calc(450px - 6px - 6px);
+			}
+
+			.CodeMirror {
+				width: calc(100% - 6px - 6px);
+			}
+		}
+
+		@media (min-width: 0px){
+
+			iframe {
+				-webkit-transform: scale(.75);
+				transform: scale(.75);
+				-webkit-transform-origin: top;
+				transform-origin: top;
+				border: none;
+				box-shadow: 0px 8px 20px 10px rgba(0, 0, 0, .2);
+			}
+		}
+
+		button {
+			margin-top: 8px;
+			margin-bottom: 8px;
+			text-align: center;
+	    background: none;
+	    border: none;
+	    color: white;
+	    font-family: 'Roboto Mono', monospace;
+	    font-size: 1.5em;
+			width: 100%;
+			cursor: pointer;
+		}
+
+		@media (max-width: 287px) {
+			button:first-of-type{
+				border-bottom: 2px solid white;
+		    padding-bottom: 12px;
+		    margin-bottom: 0px;
+			}
+		}
+
+		@media (min-width: 288px) {
+			button {
+
+				width: calc(50% - 2px) !important;
+			}
+		button:first-of-type{
+
+	    border-right: 2px solid white;
+		}
+	}
+
+		#iframecontainer {
+			margin: 0 auto;
+			margin-top: 60px;
+			overflow-x: hidden;
+		}
+
+		#iframewrapper {
+			margin: 0 auto;
+				width: 384px;
+		}
+
+		@media (max-width: 384px) {
+					#iframewrapper {
+							margin-left: calc(0.5*(100vw - 288px));
+					}
+					iframe{
+
+						-webkit-transform-origin: 0 0 !important;
+						transform-origin: 0 0 !important;
+					}
+		}
+
+		iframe {
 			background-color: white;
-			width: 384px;
+			width: 100%;
 			height: 500px;
 		}
 
-		button{
-			margin-top: 8px;
-			margin-bottom: 8px;
-		}
-
+		/*.CodeMirror-linenumber {
+			font-family: 'Courgette';
+		}*/
 	</style>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/theme/base16-dark.min.css" integrity="sha256-X67YRu1NMnnvJJ1h9B7aBcAizvn0rFgUk14ftb4Yfgg=" crossorigin="anonymous" />
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.min.js"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/mode/xml/xml.min.js" integrity="sha256-cphnEddX56MtGJsi1PoCPLds+dlnDj1QQkAlCWeJYDo=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/mode/javascript/javascript.min.js" integrity="sha256-7AjEsHnW7cpq2raC/uxnGCP2G4zIKmCdz7OAv6LN00o=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/mode/css/css.min.js" integrity="sha256-mjhvNBMExwa2AtP0mBlK9NkzJ7sgRSyZdgw9sPhhtb0=" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/mode/xml/xml.min.js" integrity="sha256-cphnEddX56MtGJsi1PoCPLds+dlnDj1QQkAlCWeJYDo=" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/mode/javascript/javascript.min.js" integrity="sha256-7AjEsHnW7cpq2raC/uxnGCP2G4zIKmCdz7OAv6LN00o=" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/mode/css/css.min.js" integrity="sha256-mjhvNBMExwa2AtP0mBlK9NkzJ7sgRSyZdgw9sPhhtb0=" crossorigin="anonymous"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/mode/htmlmixed/htmlmixed.min.js" integrity="sha256-qfS6ZUe6JhPU75/Sc1ftiWzC2N9IxGEjlRwpKB78Ico=" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/mode/htmlmixed/htmlmixed.min.js" integrity="sha256-qfS6ZUe6JhPU75/Sc1ftiWzC2N9IxGEjlRwpKB78Ico=" crossorigin="anonymous"></script>
 </head>
 
 <body>
 	<header>
 		<div id="logocontainer">
 			<h1>
-			<img src="https://printi.me/Content/printi_logo_transparent.svg" width="100" height="34" alt="printi" title="printi">
-			<span id="printernametitle"> channel creator</span></h1>
+				<img src="https://printi.me/Content/printi_logo_transparent.svg" width="100" height="34" alt="printi" title="printi">
+				<span id="printernametitle"> channel editor</span></h1>
 		</div>
 	</header>
 
@@ -141,9 +247,17 @@
 			<p>This is a paragraph.<span style = "color:red"> It is editable. </span> Try to change this text.</p>
 		</div>-->
 		<textarea spellcheck="false"></textarea>
-		<button onclick="javascript:window.l()">🚨 Preview ⚡</button>
+		<div id="previewclickarea">
+			<button onclick="javascript:window.l()"> Publish </button>
+			<button onclick="javascript:window.l()"> <b>Preview</b> </button>
+		</div>
+
 		<br>
-		<iframe id="screen"></iframe>
+		<div id="iframecontainer">
+		<div id="iframewrapper">
+			<iframe id="screen"></iframe>
+		</div>
+	</div>
 	</main>
 
 	<footer>
@@ -153,26 +267,31 @@
 	<script>
 		document.addEventListener("DOMContentLoaded", function() {
 
-			var startScript = "<!-- This HTML script will be displayed on a page (like the preview) and sent to your printi! 🖨 -->\n\n<p>Good morning from <em><span id=\"name\"></span></em>!</p>\n\n<p>Here is today's cat!</p>\n<img id=\"🐱\" style=\"width: 100%\"/>\n\n<!------------------->\n\n<script>\n  document.querySelector(\"#name\").innerText = \"printi channels\";\n  var today = new Date();\n  document.querySelector(\"#🐱\").src = \"https://cataas.com/cat/says/\" + today.toDateString();\n<\/script>";
+			var startScript =
+				"<!-- This HTML script will be displayed on a page (like the preview) and sent to your printi! 🖨 -->\n\n<p>Good morning from <em><span id=\"name\"></span></em>!</p>\n\n<p>Here is today's cat!</p>\n<img id=\"🐱\" style=\"width: 100%\"/>\n\n<!------------------->\n\n<script>\n  document.querySelector(\"#name\").innerText = \"printi channels\";\n  var today = new Date();\n  document.querySelector(\"#🐱\").src = \"https://cataas.com/cat/says/\" + today.toDateString();\n<\/script>";
 
 			var textarea = document.querySelector("textarea")
 
-			var editor = CodeMirror.fromTextArea( document.querySelector("textarea"), {
-		    lineNumbers: true,
-				mode:  "text/html",
+			var editor = CodeMirror.fromTextArea(document.querySelector("textarea"), {
+				lineNumbers: true,
+				mode: "text/html",
 				lineWrapping: true,
-				lineNumberFormatter: i => ">",
+				lineNumberFormatter: i => "⋅",
 				theme: "base16-dark",
-		  });
+				viewportMargin: 20,
+			});
 			editor.setValue(startScript);
+			document.fonts.ready.then(function () { console.log("fonts loaded"); editor.refresh() });
 			window.editor = editor;
 			var inputboxy = document.querySelector("#inputboxy")
 			var screen = document.querySelector("#screen")
 
-			window.l = function(e){
+			window.l = function(e) {
 
 				var tempFn = doT.template(editor.getValue());
-				var resultText = tempFn({foo: 'with doT'});
+				var resultText = tempFn({
+					foo: 'with doT'
+				});
 				var displaySource = resultText
 
 				console.log(textarea.value)
