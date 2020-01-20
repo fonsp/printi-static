@@ -1,0 +1,194 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta name="viewport" content="width=device-width, user-scalable=no" />
+	<title>printi</title>
+	<meta charset="utf-8" />
+	<script>
+		console.log("printi channels, by Fons van der Plas (http://github.com/fonsp) 🌈");
+	</script>
+	<meta name="author" content="Fons van der Plas" />
+	<link rel="author" href="https://github.com/fonsp" />
+	<link rel="license" href="https://github.com/fonsp/printi/blob/master/LICENSE" />
+	<meta name="theme-color" content="#FFEFEF" />
+	<meta name="description" content="Send your pictures to the world's fastest photo printer!" />
+	<link href="https://fonts.googleapis.com/css?family=Courgette|Itim" rel="stylesheet">
+	<style>
+		/* GENERAL PAGE LAYOUT */
+
+		body {
+			background-color: #ffe3e3;
+			margin: 0px;
+		}
+
+		main,
+		footer {
+			margin: 0 auto;
+			max-width: 450px;
+			align-content: center;
+		}
+
+		footer {
+			text-decoration: underline;
+			font-family: monospace;
+			font-style: italic;
+			margin-top: 400px;
+			padding-bottom: 50px;
+		}
+
+		footer a {
+			color: black;
+			opacity: .6;
+		}
+
+		#logje {
+			text-align: left;
+			font-family: monospace;
+		}
+
+		#logje p::before {
+			content: "> ";
+			opacity: .5;
+		}
+
+		/* HEADER */
+
+		header {
+			letter-spacing: 3px;
+			background-color: #ffefef;
+			font-family: 'Courgette', sans-serif;
+			width: 100%;
+			overflow: hidden;
+			text-align: center;
+		}
+
+		#logocontainer {
+			margin: 0 auto;
+			width: 250px;
+			padding-top: 16px;
+			padding-bottom: 0px;
+			align-content: center;
+			text-align: center;
+			position: relative;
+		}
+
+		#logocontainer img {
+			margin-left: -200px;
+			margin-right: 15px;
+		}
+
+		#logocontainer h1 {
+			margin-top: 10px;
+		}
+
+		#printernametitle {
+
+			position: absolute;
+			white-space: nowrap;
+			font-weight: normal;
+			font-family: monospace;
+			opacity: .6;
+		}
+
+		/* MAIN */
+
+		#inputboxy {
+			text-align: left;
+			font-family: monospace;
+			font-size: 16px;
+			background-color: white;
+			border: 5px solid white;
+			border-radius: 5px;
+		}
+
+		iframe{
+			background-color: white;
+			width: 384px;
+			height: 500px;
+		}
+
+		button{
+			margin-top: 8px;
+			margin-bottom: 8px;
+		}
+
+	</style>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/theme/base16-dark.min.css" integrity="sha256-X67YRu1NMnnvJJ1h9B7aBcAizvn0rFgUk14ftb4Yfgg=" crossorigin="anonymous" />
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/mode/xml/xml.min.js" integrity="sha256-cphnEddX56MtGJsi1PoCPLds+dlnDj1QQkAlCWeJYDo=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/mode/javascript/javascript.min.js" integrity="sha256-7AjEsHnW7cpq2raC/uxnGCP2G4zIKmCdz7OAv6LN00o=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/mode/css/css.min.js" integrity="sha256-mjhvNBMExwa2AtP0mBlK9NkzJ7sgRSyZdgw9sPhhtb0=" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/mode/htmlmixed/htmlmixed.min.js" integrity="sha256-qfS6ZUe6JhPU75/Sc1ftiWzC2N9IxGEjlRwpKB78Ico=" crossorigin="anonymous"></script>
+</head>
+
+<body>
+	<header>
+		<div id="logocontainer">
+			<h1>
+			<img src="https://printi.me/Content/printi_logo_transparent.svg" width="100" height="34" alt="printi" title="printi">
+			<span id="printernametitle"> channel creator</span></h1>
+		</div>
+	</header>
+
+	<main id="receiptstack">
+		<!--<div id="inputboxy" contenteditable="true">
+			<p>This is a paragraph.<span style = "color:red"> It is editable. </span> Try to change this text.</p>
+		</div>-->
+		<textarea spellcheck="false"></textarea>
+		<button onclick="javascript:window.l()">🚨 Preview ⚡</button>
+		<br>
+		<iframe id="screen"></iframe>
+	</main>
+
+	<footer>
+		<a href="https://github.com/fons-/printi/blob/master/README.md" rel="help">What is printi?</a>
+	</footer>
+
+	<script>
+		document.addEventListener("DOMContentLoaded", function() {
+
+			var startScript = "<!-- This HTML script will be displayed on a page (like the preview) and sent to your printi! 🖨 -->\n\n<p>Good morning from <em><span id=\"name\"></span></em>!</p>\n\n<p>Here is today's cat!</p>\n<img id=\"🐱\" style=\"width: 100%\"/>\n\n<!------------------->\n\n<script>\n  document.querySelector(\"#name\").innerText = \"printi channels\";\n  var today = new Date();\n  document.querySelector(\"#🐱\").src = \"https://cataas.com/cat/says/\" + today.toDateString();\n<\/script>";
+
+			var textarea = document.querySelector("textarea")
+
+			var editor = CodeMirror.fromTextArea( document.querySelector("textarea"), {
+		    lineNumbers: true,
+				mode:  "text/html",
+				lineWrapping: true,
+				lineNumberFormatter: i => ">",
+				theme: "base16-dark",
+		  });
+			editor.setValue(startScript);
+			window.editor = editor;
+			var inputboxy = document.querySelector("#inputboxy")
+			var screen = document.querySelector("#screen")
+
+			window.l = function(e){
+
+				var tempFn = doT.template(editor.getValue());
+				var resultText = tempFn({foo: 'with doT'});
+				var displaySource = resultText
+
+				console.log(textarea.value)
+				console.log(displaySource)
+
+				screen.src = "about:blank"
+				screen.contentWindow.document.open()
+				screen.contentWindow.document.write(displaySource)
+				screen.contentWindow.document.close()
+
+			};
+			//editor.on("change", window.l);
+
+		});
+	</script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/dot/1.1.3/doT.min.js" integrity="sha256-0Mj4wysSsxKrjqVsgnOgOeRZbPreFi/T3+zb+cyR7Jw=" crossorigin="anonymous"></script>
+</body>
+
+</html>
