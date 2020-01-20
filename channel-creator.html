@@ -193,6 +193,12 @@
 		#iframewrapper {
 			margin: 0 auto;
 			width: 384px;
+			transition: margin-top 1500ms linear;
+			margin-top: 375px;
+		}
+
+		.activatedwrapper {
+			margin-top: 0px !important;
 		}
 
 		@media (max-width: 384px) {
@@ -346,6 +352,12 @@
 			var screen = document.querySelector("#screen")
 
 			window.l = function(e) {
+				var wrapper = document.querySelector("#iframewrapper");
+
+				wrapper.classList.remove("activatedwrapper");
+				setTimeout(function() {
+					wrapper.classList.add("activatedwrapper");
+				}, 100);
 
 				var tempFn = doT.template(editor.getValue());
 				var resultText = tempFn({
