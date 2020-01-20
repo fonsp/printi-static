@@ -338,15 +338,19 @@
 				lineNumbers: true,
 				mode: "text/html",
 				lineWrapping: true,
-				lineNumberFormatter: i => "⋅",
+				lineNumberFormatter: function(i) {
+					return "⋅"
+				},
 				theme: "base16-dark",
 				viewportMargin: 20,
 			});
 			editor.setValue(startScript);
-			document.fonts.ready.then(function() {
-				console.log("fonts loaded");
-				editor.refresh()
-			});
+			if ("fonts" in document) {
+				document.fonts.ready.then(function() {
+					console.log("fonts loaded");
+					editor.refresh()
+				});
+			}
 			window.editor = editor;
 			var inputboxy = document.querySelector("#inputboxy")
 			var screen = document.querySelector("#screen")
