@@ -31,11 +31,14 @@
 		}
 
 		footer {
+			min-height: 200px;
 			text-decoration: underline;
 			font-family: monospace;
 			font-style: italic;
-			margin-top: 400px;
 			padding-bottom: 50px;
+			background: #fffefb;
+			background: linear-gradient(160deg, rgba(255,250,230,1) 0%, rgba(242,217,219,1) 100%);
+			border-radius: 10px 10px 0px 0px;
 		}
 
 		footer a {
@@ -127,10 +130,10 @@
 
 		#previewclickarea {
 			background: rgba(0, 0, 0, .9);
-			border: 6px solid white;
+			border: 6px solid rgba(255, 255, 255, .2);
 			border-radius: 6px;
-	    width: calc(100% - 12px);
-	    margin-top: -12px;
+			width: calc(100% - 12px);
+			margin-top: -12px;
 			padding-top: 6px;
 		}
 
@@ -145,7 +148,7 @@
 			}
 		}
 
-		@media (min-width: 0px){
+		@media (min-width: 0px) {
 
 			iframe {
 				-webkit-transform: scale(.75);
@@ -161,60 +164,80 @@
 			margin-top: 8px;
 			margin-bottom: 8px;
 			text-align: center;
-	    background: none;
-	    border: none;
-	    color: white;
-	    font-family: 'Roboto Mono', monospace;
-	    font-size: 1.5em;
+			background: none;
+			border: none;
+			color: white;
+			font-family: 'Roboto Mono', monospace;
+			font-size: 1.5em;
 			width: 100%;
 			cursor: pointer;
 		}
 
 		@media (max-width: 287px) {
-			button:first-of-type{
-				border-bottom: 2px solid white;
-		    padding-bottom: 12px;
-		    margin-bottom: 0px;
+			button:first-of-type {
+				border-bottom: 4px solid rgba(255, 255, 255, .2);
+				padding-bottom: 12px;
+				margin-bottom: 0px;
 			}
 		}
 
 		@media (min-width: 288px) {
 			button {
 
-				width: calc(50% - 2px) !important;
+				width: calc(50% - 4px) !important;
 			}
-		button:first-of-type{
 
-	    border-right: 2px solid white;
+			button:first-of-type {
+
+				border-right: 4px solid rgba(255, 255, 255, .2);
+			}
 		}
-	}
 
 		#iframecontainer {
 			margin: 0 auto;
 			margin-top: 60px;
 			overflow-x: hidden;
+			height: 374px;
+			overflow-y: hidden;
 		}
 
 		#iframewrapper {
 			margin: 0 auto;
-				width: 384px;
+			width: 384px;
 		}
 
 		@media (max-width: 384px) {
-					#iframewrapper {
-							margin-left: calc(0.5*(100vw - 288px));
-					}
-					iframe{
+			#iframewrapper {
+				margin-left: calc(0.5*(100vw - 288px));
+			}
 
-						-webkit-transform-origin: 0 0 !important;
-						transform-origin: 0 0 !important;
-					}
+			iframe {
+
+				-webkit-transform-origin: 0 0 !important;
+				transform-origin: 0 0 !important;
+			}
 		}
 
 		iframe {
 			background-color: white;
 			width: 100%;
 			height: 500px;
+		}
+
+		#recipients{
+			width: 150px;
+			margin: 0 auto;
+			padding-top: 30px;
+		}
+
+		#recipients > input {
+			background: white;
+			width: 100%;
+		}
+
+		#info{
+			width: 200px;
+			margin: 0 auto;
 		}
 
 		/*.CodeMirror-linenumber {
@@ -254,14 +277,20 @@
 
 		<br>
 		<div id="iframecontainer">
-		<div id="iframewrapper">
-			<iframe id="screen"></iframe>
+			<div id="iframewrapper">
+				<iframe id="screen"></iframe>
+			</div>
 		</div>
-	</div>
 	</main>
 
 	<footer>
-		<a href="https://github.com/fons-/printi/blob/master/README.md" rel="help">What is printi?</a>
+		<div id="recipients">
+			<input type="text">
+				<input type="text">
+		</div>
+		<div id="info">
+			<a href="https://github.com/fons-/printi/blob/master/README.md" rel="help">What is printi?</a>
+		</div>
 	</footer>
 
 	<script>
@@ -281,7 +310,10 @@
 				viewportMargin: 20,
 			});
 			editor.setValue(startScript);
-			document.fonts.ready.then(function () { console.log("fonts loaded"); editor.refresh() });
+			document.fonts.ready.then(function() {
+				console.log("fonts loaded");
+				editor.refresh()
+			});
 			window.editor = editor;
 			var inputboxy = document.querySelector("#inputboxy")
 			var screen = document.querySelector("#screen")
