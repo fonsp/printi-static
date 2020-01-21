@@ -26,7 +26,7 @@
 		main,
 		footer {
 			margin: 0 auto;
-			max-width: 450px;
+			max-width: 600px;
 			align-content: center;
 		}
 
@@ -134,17 +134,19 @@
 			border-radius: 6px;
 			width: calc(100% - 12px);
 			margin-top: -12px;
+			margin-left: auto;
+			margin-right: auto;
 			padding-top: 6px;
 		}
 
 		@media (min-width: 450px) {
 
-			#previewclickarea {
-				width: calc(450px - 6px - 6px);
-			}
-
 			.CodeMirror {
 				width: calc(100% - 6px - 6px);
+			}
+
+			#previewclickarea {
+				width: calc(450px - 6px - 6px);
 			}
 		}
 
@@ -330,7 +332,7 @@
 		document.addEventListener("DOMContentLoaded", function() {
 
 			var startScript =
-				"<!-- This HTML script will be displayed on a page (like the preview) and sent to your printi! 🖨 -->\n\n<p>Good morning from <em><span id=\"name\"></span></em>!</p>\n\n<p>Here is today's cat!</p>\n<img id=\"🐱\" style=\"width: 100%\"/>\n\n<!------------------->\n\n<script>\n  document.querySelector(\"#name\").innerText = \"printi channels\";\n  var today = new Date();\n  document.querySelector(\"#🐱\").src = \"https://cataas.com/cat/says/\" + today.toDateString();\n<\/script>";
+				"<!-- This HTML script will be displayed on a page (like the preview) and sent to your printi! 🖨 -->\n\n<p>Good morning from <em><span id=\"name\"></span></em>!</p>\n\n<p>Here is today's cat!</p>\n<img id=\"🐱\" style=\"width: 100%\"/>\n\n<!------------------->\n\n<script>\n  document.querySelector(\"#name\").innerText = \"printi channels\";\n  var today = new Date();\n  document.querySelector(\"#🐱\").src = \"https://cataas.com/cat/says/\" + today.toDateString();\n<\/script>\n";
 
 			var textarea = document.querySelector("textarea")
 
@@ -369,8 +371,7 @@
 				});
 				var displaySource = resultText
 
-				console.log(textarea.value)
-				console.log(displaySource)
+				//console.log(displaySource)
 
 				screen.src = "about:blank"
 				screen.contentWindow.document.open()
@@ -378,6 +379,9 @@
 				screen.contentWindow.document.close()
 
 			};
+			editor.setOption("extraKeys", {
+				"Ctrl-Enter": window.l
+			});
 			//editor.on("change", window.l);
 
 			var recipientsel = document.querySelector("#recipients");
