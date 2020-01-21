@@ -385,7 +385,17 @@
 			//editor.on("change", window.l);
 
 			var recipientsel = document.querySelector("#recipients");
-			window.recipientsel = recipientsel
+			window.recipientsel = recipientsel;
+
+			var handle_backspace_enter = function(e) {
+				if (e.keyCode == 8 && e.srcElement.value == "") {
+					e.srcElement.parentElement.previousElementSibling.firstElementChild.focus()
+					e.preventDefault();
+				}
+				if (e.keyCode == 13) {
+					e.srcElement.parentElement.nextElementSibling.firstElementChild.focus()
+				}
+			}
 
 			var update_recipient_fields = function(e) {
 				var inputs = recipientsel.querySelectorAll("input");
@@ -403,6 +413,7 @@
 				inputs = recipientsel.querySelectorAll("input");
 				for (var i = 0; i < inputs.length; i++) {
 					inputs[i].oninput = update_recipient_fields;
+					inputs[i].onkeydown = handle_backspace_enter;
 				}
 			}
 			update_recipient_fields(false);
