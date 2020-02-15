@@ -428,7 +428,9 @@
 			uploadImage = function(fileSource, videoSource) {
 				// Will hold the DOM element of the receipt corresponding to this image.
 				var receiptEl = document.querySelector("#receiptprototype > div").cloneNode(true);
-				document.querySelector("#receiptstack").prepend(receiptEl);
+				// Not supported in IE:
+				//document.querySelector("#receiptstack").prepend(receiptEl);
+				document.querySelector("#receiptstack").prepend(receiptEl, document.querySelector("#receiptprototype"));
 
 				var xhr = new XMLHttpRequest();
 
