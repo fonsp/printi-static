@@ -430,7 +430,7 @@
 				var receiptEl = document.querySelector("#receiptprototype > div").cloneNode(true);
 				// Not supported in IE:
 				//document.querySelector("#receiptstack").prepend(receiptEl);
-				document.querySelector("#receiptstack").prepend(receiptEl, document.querySelector("#receiptprototype"));
+				document.querySelector("#receiptstack").insertBefore(receiptEl, document.querySelector("#receiptprototype"));
 
 				var xhr = new XMLHttpRequest();
 
@@ -451,13 +451,15 @@
 					console.log(e);
 
 					receiptEl.querySelector("#curtain").setAttribute("style", "width: 0%;");
+					try{
 					receiptEl.querySelector(".previewimg").classList.add("bwfilter");
+					} catch (e){}
 					setTimeout(function() {
 						receiptEl.classList.remove("wiggler");
 						receiptEl.querySelector(".receiptpadder").classList.add("printed");
 						setTimeout(function() {
 							//TODO: remove el
-							receiptEl.remove()
+							document.querySelector("#receiptstack").removeChild(receiptEl);
 						}, 2000);
 					}, 1000);
 				};
@@ -524,8 +526,10 @@
 					var previewEl = receiptEl.querySelector(".preview");
 					var filenameP = document.createElement("p");
 					filenameP.innerText = fileSource.name;
-					previewEl.querySelector("img").remove();
-					previewEl.prepend(filenameP);
+					var previewImg = previewEl.querySelector("img");
+					previewImg.parentNode.removeChild(previewImg);
+					
+					previewEl.appendChild(filenameP);
 
 					var data = new FormData();
 					data.append("file0", fileSource);
