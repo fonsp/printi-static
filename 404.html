@@ -466,8 +466,12 @@
 
 				xhr.onerror = console.log;
 				xhr.onabort = console.log;
+				
+				const api_server = window.printi_api_server ?? "https://api.printi.me"
+				const printi_name = window.printi_name ?? document.location.pathname.replace(/^\//, '')
 
-				xhr.open('POST', 'https://api.printi.me/submitimages' + document.location.pathname, true);
+				console.log("Sending to ", new URL(`submitimages/${printi_name}`, api_server))
+				xhr.open('POST', new URL(`submitimages/${printi_name}`, api_server), true);
 
 				var ua = window.navigator.userAgent;
 				var ie = (ua.indexOf('MSIE ') + ua.indexOf('Trident/') + ua.indexOf('Edge/') > -3);
